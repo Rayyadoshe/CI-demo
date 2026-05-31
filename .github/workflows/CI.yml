@@ -18,4 +18,5 @@ jobs:
           java-version: '21'
 
       - name: Run Maven tests
+        working-directory: CI-demo
         run: mvn test

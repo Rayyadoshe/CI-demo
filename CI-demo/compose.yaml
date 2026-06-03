@@ -1,0 +1,5 @@
+// defination af container
+services: 
+  ci-demo: 
+    build: . // build image fra nuværende mappe
+    container_name: ci-demo

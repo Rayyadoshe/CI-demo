@@ -1,7 +1,7 @@
-name: Java CI
 on:
   push:
   workflow_dispatch:
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -25,3 +25,22 @@ jobs:
       - name: Run Maven tests
         working-directory: CI-demo
         run: mvn test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy directly to VM
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd ~/CI-demo
+            git pull
+            docker build -t ci-demo .
+            docker stop ci-demo || true
+            docker rm ci-demo || true
+            docker run -d --name ci-demo -p 8080:8080 ci-demo
